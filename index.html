@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickDrop | Delivery ordering demo</title>
+  <meta name="description" content="QuickDrop is a delivery ordering demo with a REST-style API layer, order lifecycle tracking and a live API inspector. Built by Harsh Chakarvarti." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛵</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">🛵</span>
+      <div>
+        <h1>QuickDrop</h1>
+        <p>Order. Track. Delivered.</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" data-tab="order" aria-selected="true">Order</button>
+      <button class="tab" role="tab" data-tab="orders" aria-selected="false">My orders <span class="count" id="orders-count">0</span></button>
+      <button class="tab" role="tab" data-tab="api" aria-selected="false">API inspector</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ORDER TAB -->
+    <section id="tab-order" class="panel" role="tabpanel">
+      <div class="layout">
+        <div>
+          <h2>Menu</h2>
+          <div id="menu" class="menu" aria-live="polite">
+            <p class="muted">Loading menu…</p>
+          </div>
+        </div>
+
+        <form id="order-form" class="card sticky" novalidate>
+          <h2>Your order</h2>
+          <div id="cart" class="cart"></div>
+          <p class="field-error" data-error-for="items"></p>
+
+          <dl class="totals">
+            <div><dt>Subtotal</dt><dd id="subtotal">₹0</dd></div>
+            <div><dt>Delivery fee</dt><dd id="fee">₹0</dd></div>
+            <div class="grand"><dt>Total</dt><dd id="total">₹0</dd></div>
+          </dl>
+
+          <label for="customerName">Name</label>
+          <input id="customerName" name="customerName" type="text" autocomplete="name" placeholder="Your full name" />
+          <p class="field-error" data-error-for="customerName"></p>
+
+          <label for="phone">Mobile number</label>
+          <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit number" />
+          <p class="field-error" data-error-for="phone"></p>
+
+          <label for="address">Delivery address</label>
+          <textarea id="address" name="address" rows="2" autocomplete="street-address" placeholder="House no, street, area"></textarea>
+          <p class="field-error" data-error-for="address"></p>
+
+          <button type="submit" id="place-btn" class="btn primary block" disabled>Place order</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ORDERS TAB -->
+    <section id="tab-orders" class="panel" role="tabpanel" hidden>
+      <div class="toolbar">
+        <h2>My orders</h2>
+        <div class="toolbar-actions">
+          <label class="switch">
+            <input type="checkbox" id="auto-sim" />
+            <span>Simulate courier (auto-advance)</span>
+          </label>
+          <button class="btn ghost" id="reset-btn" type="button">Reset demo data</button>
+        </div>
+      </div>
+      <div id="orders" class="orders" aria-live="polite"></div>
+    </section>
+
+    <!-- API TAB -->
+    <section id="tab-api" class="panel" role="tabpanel" hidden>
+      <div class="toolbar">
+        <div>
+          <h2>API inspector</h2>
+          <p class="muted">Every action in the app is a REST-style request. Open any call to see the request and response, just like browser dev tools.</p>
+        </div>
+        <button class="btn ghost" id="clear-log" type="button">Clear log</button>
+      </div>
+
+      <div class="card endpoints">
+        <h3>Endpoints</h3>
+        <table>
+          <thead><tr><th>Method</th><th>Path</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>GET</code></td><td><code>/menu</code></td><td>List menu items and delivery fee</td></tr>
+            <tr><td><code>GET</code></td><td><code>/orders?status=</code></td><td>List orders, newest first (optional filter)</td></tr>
+            <tr><td><code>POST</code></td><td><code>/orders</code></td><td>Create an order (validated)</td></tr>
+            <tr><td><code>GET</code></td><td><code>/orders/:id</code></td><td>Fetch one order</td></tr>
+            <tr><td><code>PATCH</code></td><td><code>/orders/:id/status</code></td><td>Move to the next lifecycle status</td></tr>
+            <tr><td><code>POST</code></td><td><code>/orders/:id/cancel</code></td><td>Cancel (only before it is out for delivery)</td></tr>
+            <tr><td><code>DELETE</code></td><td><code>/orders</code></td><td>Clear all demo data</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="api-log" class="api-log" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Built by <strong>Harsh Chakarvarti</strong> · HTML, CSS and vanilla JavaScript · The API runs in your browser and saves to localStorage.</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
